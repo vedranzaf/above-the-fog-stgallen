@@ -1185,6 +1185,30 @@ input[type="range"].is-live-match {
   font-size: 0.86rem;
 }
 
+.ad-strip {
+  margin: -0.75rem 0 1.85rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.ad-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.footer-privacy {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
 .cheatsheet-title {
   font-size: 1.2rem;
   margin-bottom: 0.9rem;
