@@ -301,10 +301,23 @@ function initMap() {
     ST_GALLEN_CENTER.zoom
   );
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-    maxZoom: 18
-  }).addTo(mapInstance);
+  const swisstopo = L.tileLayer(
+    "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
+    {
+      attribution: '&copy; <a href="https://www.swisstopo.admin.ch/" target="_blank" rel="noopener noreferrer">swisstopo</a>',
+      maxZoom: 18
+    }
+  ).addTo(mapInstance);
+
+  const osm = L.tileLayer(
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+      maxZoom: 19
+    }
+  );
+
+  L.control.layers({ "Swiss Topo (swisstopo)": swisstopo, OpenStreetMap: osm }).addTo(mapInstance);
 
   const homeIcon = L.divIcon({
     className: "map-pin-wrap",
