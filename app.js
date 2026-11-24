@@ -301,23 +301,37 @@ function initMap() {
     ST_GALLEN_CENTER.zoom
   );
 
-  const swisstopo = L.tileLayer(
-    "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
+  const swissSatellite = L.tileLayer(
+    "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg",
     {
       attribution: '&copy; <a href="https://www.swisstopo.admin.ch/" target="_blank" rel="noopener noreferrer">swisstopo</a>',
       maxZoom: 18
     }
   ).addTo(mapInstance);
 
-  const osm = L.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+  const esriSatellite = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
-      maxZoom: 19
+      attribution: "&copy; Esri, Maxar, Earthstar Geographics",
+      maxZoom: 18
     }
   );
 
-  L.control.layers({ "Swiss Topo (swisstopo)": swisstopo, OpenStreetMap: osm }).addTo(mapInstance);
+  const placeLabels = L.tileLayer(
+    "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: "&copy; Esri",
+      maxZoom: 18,
+      pane: "overlayPane"
+    }
+  ).addTo(mapInstance);
+
+  L.control
+    .layers(
+      { "Swiss Satellite": swissSatellite, "World Satellite": esriSatellite },
+      { "Towns & Villages": placeLabels }
+    )
+    .addTo(mapInstance);
 
   const homeIcon = L.divIcon({
     className: "map-pin-wrap",
