@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Above the Fog · St. Gallen Sun Escape Guide</title>
+  <meta
+    name="description"
+    content="Practical guide to escaping valley fog (Hochnebel) around St. Gallen: interactive altitude-vs-fog spot finder, live webcams, MeteoSwiss playbook, and winter 2026/27 cable car status."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand">
+        <span class="brand-sun" aria-hidden="true">☀</span>
+        <span>Above the Fog · St. Gallen</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="#finder">Spot Finder</a>
+        <a href="#spots">All Spots</a>
+        <a href="#webcams">Webcams &amp; Tools</a>
+        <a href="#guide">Decision Guide</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Eastern Switzerland · Fog Escape Playbook</p>
+          <h1>Grey in St. Gallen, sun 25 minutes up.</h1>
+          <p class="lead">
+            St. Gallen sits at <strong>~675 m</strong>—right inside the Swiss autumn and winter
+            <em>Hochnebel</em> layer (typically 800–1,600 m). Match your morning destination to
+            today's fog ceiling, confirm it in 60 seconds on live webcams, and head straight into
+            blue sky.
+          </p>
+          <div class="hero-actions">
+            <a href="#finder" class="btn btn-primary">Find Today's Spot</a>
+            <a href="#webcams" class="btn btn-secondary">Check Live Webcams</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Quick reference altitudes">
+          <div class="hero-card-row">
+            <span class="label">St. Gallen Valley</span>
+            <span class="val">~675 m</span>
+          </div>
+          <div class="hero-card-row">
+            <span class="label">Calm High-Pressure Fog</span>
+            <span class="val">800–1,000 m</span>
+          </div>
+          <div class="hero-card-row">
+            <span class="label">Bise (NE Wind) Fog</span>
+            <span class="val">1,100–1,700 m</span>
+          </div>
+          <div class="hero-card-row highlight">
+            <span class="label">Recommended Safety Buffer</span>
+            <span class="val">+150–200 m</span>
+          </div>
+          <p class="hero-card-note">
+            Status &amp; timetables verified for <strong>November 2026</strong> (including Ebenalp
+            &amp; Säntis maintenance closures until ~Dec 18, 2026).
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Interactive Spot Finder -->
+    <section id="finder" class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Interactive Decision Helper</p>
+          <h2>Where should I go today?</h2>
+          <p class="section-sub">
+            Dial in the forecast fog ceiling (<em>Hochnebelobergrenze</em>) and wind direction from
+            MeteoSwiss to see which peaks sit cleanly above the sea of fog.
+          </p>
+        </div>
+
+        <div class="finder-panel">
+          <div class="finder-controls">
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="fog-slider">Forecast Fog Ceiling</label>
+                <span class="ceiling-readout" id="ceiling-readout">1,100 m</span>
+              </div>
+              <input
+                type="range"
+                id="fog-slider"
+                min="700"
+                max="2000"
+                step="50"
+                value="1100"
+              />
+              <div class="range-ticks" aria-hidden="true">
+                <span>700 m</span>
+                <span>1,000 m</span>
+                <span>1,350 m</span>
+                <span>1,700 m</span>
+                <span>2,000 m</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <span class="control-title">Wind Condition (Sets Safety Buffer)</span>
+              <div class="pill-group" id="wind-buttons" role="group" aria-label="Wind condition">
+                <button type="button" class="pill-btn" data-wind="calm">
+                  Calm High Pressure
+                </button>
+                <button type="button" class="pill-btn active" data-wind="weak-bise">
+                  Weak Bise (NE)
+                </button>
+                <button type="button" class="pill-btn" data-wind="strong-bise">
+                  Strong Bise (NE)
+                </button>
+                <button type="button" class="pill-btn" data-wind="sw-foehn">
+                  SW Wind / Föhn
+                </button>
+              </div>
+              <p class="wind-hint" id="wind-hint"></p>
+            </div>
+
+            <div class="control-row-split">
+              <div class="control-group">
+                <span class="control-title">Transport</span>
+                <div class="pill-group" id="transport-buttons" role="group" aria-label="Transport mode">
+                  <button type="button" class="pill-btn active" data-transport="all">All</button>
+                  <button type="button" class="pill-btn" data-transport="public">
+                    Public Transit / GA
+                  </button>
+                  <button type="button" class="pill-btn" data-transport="car">Car</button>
+                </div>
+              </div>
+
+              <div class="control-group checkbox-group">
+                <label class="toggle-label">
+                  <input type="checkbox" id="hide-closed" checked />
+                  <span>Hide closed cable cars (Nov 2026)</span>
+                </label>
+                <p class="small-note">
+                  Ebenalp &amp; Säntis cable cars reopen ~Dec 18, 2026.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="recommendation-banner" id="recommendation-banner" aria-live="polite">
+            <!-- Populated by app.js -->
+          </div>
+
+          <div class="altitude-meter-wrap">
+            <div class="meter-header">
+              <h3>Altitude vs. Fog Ceiling</h3>
+              <div class="meter-legend">
+                <span class="legend-item"><i class="dot dot-sun"></i> Clear Sun</span>
+                <span class="legend-item"><i class="dot dot-border"></i> Borderline (in buffer)</span>
+                <span class="legend-item"><i class="dot dot-fog"></i> In Fog</span>
+                <span class="legend-item"><i class="dot dot-closed"></i> Closed</span>
+              </div>
+            </div>
+            <div id="altitude-chart" class="altitude-chart">
+              <!-- Populated by app.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Spots Directory -->
+    <section id="spots" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">1,064 m → 2,502 m</p>
+          <h2>All Spots Around St. Gallen</h2>
+          <p class="section-sub">
+            Ordered from lowest to highest altitude. Status badges update automatically based on
+            your Spot Finder settings above.
+          </p>
+        </div>
+
+        <div id="spots-grid" class="spots-grid">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Webcams & Tools Hub -->
+    <section id="webcams" class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Verify Before You Leave</p>
+          <h2>Live Webcams &amp; Fog Tools</h2>
+          <p class="section-sub">
+            Forecasting the exact fog ceiling is notoriously difficult—even MeteoSwiss notes it as
+            one of the hardest forecasts. A 30-second webcam check saves wasted trips.
+          </p>
+        </div>
+
+        <div class="trick-callout">
+          <div class="trick-badge">Best Single Check</div>
+          <h3>The Kronberg (1,663 m) + Jakobsbad (884 m) Pair Trick</h3>
+          <p>
+            Kronberg operates two Roundshot webcams on the same page: one at the
+            <strong>summit (1,663 m)</strong> and one at the <strong>valley station (884 m)</strong>.
+            Compare both at breakfast:
+          </p>
+          <div class="trick-grid">
+            <div class="trick-outcome sun">
+              <strong>Summit sunny + Jakobsbad foggy</strong>
+              <span>Classic fog day. Head to Kronberg, Hoher Kasten, or Schwägalp.</span>
+            </div>
+            <div class="trick-outcome low">
+              <strong>Both sunny</strong>
+              <span>Fog ceiling is below ~880 m. Quick spots like Gäbris, St. Anton, or Vögelinsegg are clear.</span>
+            </div>
+            <div class="trick-outcome grey">
+              <strong>Summit grey too</strong>
+              <span>Fog is above 1,660 m or it's full overcast. Check Hoher Kasten (1,794 m) or stay home.</span>
+            </div>
+          </div>
+          <div class="trick-links">
+            <a href="https://en.kronberg.ch/webcam.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+              Open Kronberg Dual Webcams ↗
+            </a>
+            <a href="https://kronberg.roundshot.com" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+              Kronberg 360° Roundshot ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="tools-grid">
+          <article class="tool-card">
+            <span class="tool-tag">AI Live Check</span>
+            <h3>SunCatcher.ch</h3>
+            <p>
+              Scans 650+ live webcams across Switzerland, Austria, and Bavaria using AI to map
+              where the sun is shining right now versus where fog lingers.
+            </p>
+            <a href="https://suncatcher.ch" target="_blank" rel="noopener noreferrer" class="tool-link">
+              Open suncatcher.ch ↗
+            </a>
+          </article>
+
+          <article class="tool-card">
+            <span class="tool-tag">Forecast Map</span>
+            <h3>Nebelkarte.ch</h3>
+            <p>
+              Built with OST (Eastern Switzerland University of Applied Sciences). Visualizes the
+              expected fog ceiling 1–6 days ahead. Always verify in MeteoSwiss that fog is actually
+              forecast for days 3–6.
+            </p>
+            <a href="https://www.nebelkarte.ch" target="_blank" rel="noopener noreferrer" class="tool-link">
+              Open nebelkarte.ch ↗
+            </a>
+          </article>
+
+          <article class="tool-card">
+            <span class="tool-tag">Official Weather</span>
+            <h3>MeteoSwiss (MeteoSchweiz)</h3>
+            <p>
+              The primary source for regional text forecasts (<em>Obergrenze um … m</em>), live
+              station sunshine &amp; temperature readings, visible satellite animation, and user
+              <em>Meteo Meldungen</em> photos.
+            </p>
+            <a href="https://www.meteoschweiz.admin.ch" target="_blank" rel="noopener noreferrer" class="tool-link">
+              Open meteoschweiz.admin.ch ↗
+            </a>
+          </article>
+
+          <article class="tool-card">
+            <span class="tool-tag">Bise &amp; Ceiling Analysis</span>
+            <h3>SRF Meteo</h3>
+            <p>
+              Detailed Swiss meteorological commentary explaining Bise strength, regional fog
+              stacking in Eastern Switzerland, and expected afternoon lifting.
+            </p>
+            <a href="https://www.srf.ch/meteo" target="_blank" rel="noopener noreferrer" class="tool-link">
+              Open srf.ch/meteo ↗
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Decision Playbook & Weather Rules -->
+    <section id="guide" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">How to Predict &amp; Confirm</p>
+          <h2>The 2-Step Decision Playbook</h2>
+          <p class="section-sub">
+            Combine MeteoSwiss indicators the night before with a fast morning verification routine.
+          </p>
+        </div>
+
+        <div class="playbook-grid">
+          <article class="playbook-card">
+            <div class="step-num">1 · Evening Before</div>
+            <h3>Check the MeteoSwiss App</h3>
+            <ul>
+              <li>
+                <strong>Pressure &amp; Sky:</strong> Look for a stable high-pressure setup
+                (<em>Hochdrucklage</em>) with fog/low stratus in the lowlands and full sun symbols
+                in the Alps. Skip days with high cloud decks (<em>Schleierwolken</em>) or fronts.
+              </li>
+              <li>
+                <strong>Read the Text Forecast:</strong> Open <em>Wetterbericht</em> for Eastern
+                Switzerland and look for the exact phrasing: <em>"Hochnebel mit Obergrenze um … m"</em>.
+              </li>
+              <li>
+                <strong>Check Wind Direction:</strong> Bise (NE) pushes fog up against the Alpstein;
+                SW wind or Föhn dries and lowers it.
+              </li>
+            </ul>
+          </article>
+
+          <article class="playbook-card">
+            <div class="step-num">2 · At Breakfast (2 Min)</div>
+            <h3>Confirm with Sensors &amp; Webcams</h3>
+            <ul>
+              <li>
+                <strong>St. Gallen vs. Säntis Sunshine:</strong> In MeteoSwiss live measurements,
+                compare sunshine duration at St. Gallen (776 m) vs. Säntis (2,502 m). Lots of sun on
+                Säntis and 0 min in St. Gallen confirms a textbook inversion day.
+              </li>
+              <li>
+                <strong>Temperature Inversion Test:</strong> Compare station temperatures by
+                altitude—if it's warmer (or barely colder) higher up, the inversion lid is intact.
+              </li>
+              <li>
+                <strong>Visual Proof:</strong> Check the Kronberg + Jakobsbad cams,
+                <em>SunCatcher.ch</em>, or MeteoSwiss <em>Satellite</em> &amp;
+                <em>Meteo Meldungen</em> photos.
+              </li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="timing-banner">
+          <div>
+            <h3>Timing Rule: Go Before Late Morning</h3>
+            <p>
+              The fog top often <strong>rises slightly during the morning</strong> as sunlight warms
+              the layer or if Bise picks up. Aim to be above the fog by late morning, and always pick
+              a spot <strong>150–200 m higher</strong> than the forecast ceiling so you don't sit
+              inside the fluctuating top edge.
+            </p>
+          </div>
+          <div class="ga-badge">
+            <strong>GA / Halbtax Tip</strong>
+            <span>Appenzeller Bahnen trains to Vögelinsegg, Gais (for Gäbris), and Jakobsbad (for Kronberg) are covered by your GA.</span>
+          </div>
+        </div>
+
+        <h3 class="cheatsheet-title">Wind &amp; Fog Cheat Sheet (Eastern Switzerland)</h3>
+        <div class="wind-grid">
+          <div class="wind-card">
+            <span class="wind-elev">800–1,000 m</span>
+            <h4>Calm High Pressure</h4>
+            <p>
+              Flat pressure gradient and little wind. Fog settles evenly. Quick escapes like
+              <strong>Vögelinsegg</strong>, <strong>St. Anton</strong>, or <strong>Gäbris</strong>
+              are reliably sunny.
+            </p>
+          </div>
+          <div class="wind-card">
+            <span class="wind-elev">900–1,200 m</span>
+            <h4>Weak Bise (NE)</h4>
+            <p>
+              Gentle northeast breeze banks moisture against the pre-Alps. Aim for
+              <strong>1,250 m+</strong>: <strong>Oberer Gäbris</strong>, <strong>Hochhamm</strong>,
+              <strong>Hundwiler Höhi</strong>, or <strong>Schwägalp</strong>.
+            </p>
+          </div>
+          <div class="wind-card">
+            <span class="wind-elev">1,400–1,700+ m</span>
+            <h4>Moderate / Strong Bise</h4>
+            <p>
+              Strong <em>Stau</em> (damming) against the Alpstein pushes fog deep into valleys and up
+              the slopes. Go straight to <strong>Kronberg (1,663 m)</strong> or
+              <strong>Hoher Kasten (1,794 m)</strong>.
+            </p>
+          </div>
+          <div class="wind-card">
+            <span class="wind-elev">500–800 m</span>
+            <h4>SW Wind / Föhn</h4>
+            <p>
+              Warm, dry southerly or southwest flow erodes the fog ceiling from above and often
+              clears St. Gallen itself. Low viewpoints like <strong>Pfänder</strong> or
+              <strong>Vögelinsegg</strong> easily clear.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Above the Fog · St. Gallen</strong>
+        <p>
+          Practical alpine sun-escape reference for St. Gallen &amp; Appenzell. Always double-check
+          live cable car operations and weather warnings before heading out.
+        </p>
+      </div>
+      <div class="footer-meta">
+        <span>Schedule &amp; closure data verified: November 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
