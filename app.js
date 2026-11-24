@@ -24,12 +24,16 @@ const WIND_PROFILES = {
 const OPEN_METEO_FALLBACK_URL =
   "https://api.open-meteo.com/v1/forecast?latitude=47.4245,47.2494&longitude=9.3767,9.3433&current=temperature_2m,relative_humidity_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code&daily=sunshine_duration,temperature_2m_max&timezone=Europe%2FZurich&forecast_days=2";
 
+const ST_GALLEN_CENTER = { lat: 47.4245, lng: 9.3767, zoom: 11 };
+
 const SPOTS = [
   {
     id: "pfaender",
     name: "Pfänder",
     area: "Bregenz (AT)",
     elevation: 1064,
+    lat: 47.5076,
+    lng: 9.7797,
     travelMinutes: 35,
     travelText: "~35 min drive + 6-min cable car",
     transport: ["car"],
@@ -49,6 +53,8 @@ const SPOTS = [
     name: "Vögelinsegg",
     area: "Above Speicher (AR)",
     elevation: 1084,
+    lat: 47.4050,
+    lng: 9.4239,
     travelMinutes: 15,
     travelText: "~15 min via Appenzeller Bahnen S21/S22 (GA) or car",
     transport: ["public", "car"],
@@ -65,6 +71,8 @@ const SPOTS = [
     name: "St. Anton",
     area: "Oberegg (AI)",
     elevation: 1110,
+    lat: 47.4126,
+    lng: 9.5469,
     travelMinutes: 25,
     travelText: "~25 min by car or PostAuto (GA)",
     transport: ["public", "car"],
@@ -83,6 +91,8 @@ const SPOTS = [
     name: "Oberer Gäbris",
     area: "Gais (AR)",
     elevation: 1251,
+    lat: 47.3812,
+    lng: 9.4682,
     travelMinutes: 25,
     travelText: "~25 min by car from Gais, or GA train to Gais + walk",
     transport: ["public", "car"],
@@ -102,6 +112,8 @@ const SPOTS = [
     name: "Hochhamm",
     area: "Schönengrund / Urnäsch (AR)",
     elevation: 1275,
+    lat: 47.3095,
+    lng: 9.2571,
     travelMinutes: 30,
     travelText: "~30 min drive + short walk",
     transport: ["car"],
@@ -118,6 +130,8 @@ const SPOTS = [
     name: "Hundwiler Höhi",
     area: "Hundwil (AR)",
     elevation: 1306,
+    lat: 47.3413,
+    lng: 9.3358,
     travelMinutes: 30,
     travelText: "~25–30 min drive + short hike",
     transport: ["car"],
@@ -134,6 +148,8 @@ const SPOTS = [
     name: "Schwägalp",
     area: "Pass below Säntis (AR/SG)",
     elevation: 1352,
+    lat: 47.2557,
+    lng: 9.3177,
     travelMinutes: 45,
     travelText: "~45 min by car or PostAuto (GA)",
     transport: ["public", "car"],
@@ -152,6 +168,8 @@ const SPOTS = [
     name: "Ebenalp",
     area: "Wasserauen (AI)",
     elevation: 1644,
+    lat: 47.2836,
+    lng: 9.4109,
     travelMinutes: 40,
     travelText: "~40 min GA train to Wasserauen + cable car",
     transport: ["public", "car"],
@@ -175,6 +193,8 @@ const SPOTS = [
     name: "Kronberg",
     area: "Jakobsbad (AI)",
     elevation: 1663,
+    lat: 47.2914,
+    lng: 9.3292,
     travelMinutes: 35,
     travelText: "~35 min GA train/car to Jakobsbad + cable car",
     transport: ["public", "car"],
@@ -195,6 +215,8 @@ const SPOTS = [
     name: "Hoher Kasten",
     area: "Brülisau (AI)",
     elevation: 1794,
+    lat: 47.2836,
+    lng: 9.4852,
     travelMinutes: 40,
     travelText: "~40 min car or train + PostAuto to Brülisau + 8-min cable car",
     transport: ["public", "car"],
@@ -215,6 +237,8 @@ const SPOTS = [
     name: "Säntis Summit",
     area: "Schwägalp (AI/AR/SG)",
     elevation: 2502,
+    lat: 47.2494,
+    lng: 9.3433,
     travelMinutes: 50,
     travelText: "~45 min to Schwägalp + cable car",
     transport: ["public", "car"],
@@ -260,6 +284,87 @@ const liveVerdict = document.getElementById("live-verdict");
 const liveUpdated = document.getElementById("live-updated");
 const liveStationsGrid = document.getElementById("live-stations-grid");
 const refreshWeatherBtn = document.getElementById("refresh-weather");
+const recenterMapBtn = document.getElementById("recenter-map");
+
+let mapInstance = null;
+let markersLayer = null;
+
+function initMap() {
+  const mapEl = document.getElementById("spots-map");
+  if (!mapEl || typeof L === "undefined") return;
+
+  mapInstance = L.map(mapEl, { scrollWheelZoom: false }).setView(
+    [ST_GALLEN_CENTER.lat, ST_GALLEN_CENTER.lng],
+    ST_GALLEN_CENTER.zoom
+  );
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+    maxZoom: 18
+  }).addTo(mapInstance);
+
+  const homeIcon = L.divIcon({
+    className: "map-pin-wrap",
+    html: `<div class="map-pin is-home">St. Gallen</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0]
+  });
+
+  L.marker([ST_GALLEN_CENTER.lat, ST_GALLEN_CENTER.lng], {
+    icon: homeIcon,
+    zIndexOffset: 500
+  })
+    .addTo(mapInstance)
+    .bindPopup(
+      `<div class="map-popup"><div class="map-popup-title">St. Gallen (~675 m)</div><div class="map-popup-meta">Starting point in the valley fog zone</div></div>`
+    );
+
+  markersLayer = L.layerGroup().addTo(mapInstance);
+}
+
+function renderMap(filteredSpots) {
+  if (!mapInstance || !markersLayer || typeof L === "undefined") return;
+  markersLayer.clearLayers();
+
+  filteredSpots.forEach((spot) => {
+    if (typeof spot.lat !== "number" || typeof spot.lng !== "number") return;
+    const cond = getSpotCondition(spot);
+    const icon = L.divIcon({
+      className: "map-pin-wrap",
+      html: `<div class="map-pin status-${cond.key}">${spot.elevation} m</div>`,
+      iconSize: [0, 0],
+      iconAnchor: [0, 0]
+    });
+
+    const directionsUrl = `https://www.google.com/maps/dir/St.+Gallen/${spot.lat},${spot.lng}`;
+    const webcamLinks = spot.links
+      .map(
+        (l) =>
+          `<a href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label} ↗</a>`
+      )
+      .join("");
+
+    const popupHtml = `
+      <div class="map-popup">
+        <div class="map-popup-title">${spot.name} (${formatMeters(spot.elevation)})</div>
+        <span class="status-pill status-${cond.key}">${cond.label}</span>
+        <div class="map-popup-meta">${spot.travelText}</div>
+        <div class="map-popup-links">
+          ${webcamLinks}
+          <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer">Directions ↗</a>
+        </div>
+      </div>
+    `;
+
+    L.marker([spot.lat, spot.lng], { icon })
+      .bindTooltip(`${spot.name} · ${formatMeters(spot.elevation)}`, {
+        direction: "top",
+        offset: [0, -14]
+      })
+      .bindPopup(popupHtml)
+      .addTo(markersLayer);
+  });
+}
 
 function formatMeters(m) {
   return `${m.toLocaleString("en-US")} m`;
@@ -511,6 +616,7 @@ function updateUI() {
   const filtered = SPOTS.map(getEffectiveSpot).filter(matchesFilters);
   renderRecommendation(filtered);
   renderChart(filtered);
+  renderMap(filtered);
   renderCards(filtered);
 }
 
@@ -754,5 +860,18 @@ if (refreshWeatherBtn) {
   refreshWeatherBtn.addEventListener("click", loadLiveWeather);
 }
 
+if (recenterMapBtn) {
+  recenterMapBtn.addEventListener("click", () => {
+    if (mapInstance) {
+      mapInstance.setView(
+        [ST_GALLEN_CENTER.lat, ST_GALLEN_CENTER.lng],
+        ST_GALLEN_CENTER.zoom,
+        { animate: true }
+      );
+    }
+  });
+}
+
+initMap();
 updateUI();
 loadLiveWeather();
