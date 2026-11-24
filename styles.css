@@ -281,6 +281,129 @@ a:hover {
   margin-bottom: 0;
 }
 
+/* Live Weather Bar */
+.live-weather-bar {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  margin-bottom: 1.35rem;
+}
+
+.live-weather-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.live-status-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.live-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--sky-deep);
+  color: #ffffff;
+}
+
+.live-verdict {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.live-verdict.verdict-fog {
+  color: var(--green);
+}
+
+.live-verdict.verdict-clear {
+  color: var(--sky);
+}
+
+.live-verdict.verdict-overcast {
+  color: var(--fog);
+}
+
+.live-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.live-updated {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.refresh-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.34rem 0.72rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.refresh-btn:hover {
+  border-color: var(--sky);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.live-stations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+  gap: 0.7rem;
+}
+
+.live-station-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.82rem;
+}
+
+.live-station-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.live-station-elev {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-station-metrics {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+
 /* Finder Panel */
 .finder-panel {
   background: var(--surface);

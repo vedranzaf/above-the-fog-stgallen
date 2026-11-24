@@ -88,6 +88,22 @@
         </div>
 
         <div class="finder-panel">
+          <div class="live-weather-bar" id="live-weather-bar" aria-live="polite">
+            <div class="live-weather-top">
+              <div class="live-status-wrap">
+                <span class="live-badge">Live Conditions</span>
+                <span class="live-verdict" id="live-verdict">Loading MeteoSwiss &amp; Open-Meteo…</span>
+              </div>
+              <div class="live-actions">
+                <span class="live-updated" id="live-updated"></span>
+                <button type="button" class="refresh-btn" id="refresh-weather">Refresh</button>
+              </div>
+            </div>
+            <div class="live-stations-grid" id="live-stations-grid">
+              <!-- Populated by app.js -->
+            </div>
+          </div>
+
           <div class="finder-controls">
             <div class="control-group">
               <div class="control-label-row">
@@ -232,7 +248,7 @@
             <a href="https://en.kronberg.ch/webcam.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
               Open Kronberg Dual Webcams ↗
             </a>
-            <a href="https://kronberg.roundshot.com" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <a href="https://kronberg.roundshot.com/gipfel/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
               Kronberg 360° Roundshot ↗
             </a>
           </div>
