@@ -285,6 +285,9 @@ const liveUpdated = document.getElementById("live-updated");
 const liveStationsGrid = document.getElementById("live-stations-grid");
 const refreshWeatherBtn = document.getElementById("refresh-weather");
 const recenterMapBtn = document.getElementById("recenter-map");
+const sliderLivePin = document.getElementById("slider-live-pin");
+const sliderLivePinText = document.getElementById("slider-live-pin-text");
+const sliderSafetyBar = document.getElementById("slider-safety-bar");
 
 let mapInstance = null;
 let markersLayer = null;
@@ -609,9 +612,47 @@ function syncControlsFromState() {
   });
 }
 
+function ratioForSliderAlt(alt) {
+  const min = Number(fogSlider.min) || 700;
+  const max = Number(fogSlider.max) || 2000;
+  return Math.min(1, Math.max(0, (alt - min) / (max - min)));
+}
+
+function updateSliderIndicators() {
+  if (sliderLivePin && sliderLivePinText) {
+    if (state.liveSnapshot) {
+      sliderLivePin.classList.remove("hidden");
+      sliderLivePin.style.setProperty(
+        "--live-ratio",
+        String(ratioForSliderAlt(state.liveSnapshot.ceiling))
+      );
+      sliderLivePinText.textContent = `Live ${formatMeters(state.liveSnapshot.ceiling)}`;
+    } else {
+      sliderLivePin.classList.add("hidden");
+    }
+  }
+
+  fogSlider.classList.toggle(
+    "is-live-match",
+    Boolean(state.isLiveAuto && state.liveSnapshot)
+  );
+
+  if (sliderSafetyBar) {
+    const buffer = WIND_PROFILES[state.wind].buffer;
+    const startRatio = ratioForSliderAlt(state.ceiling);
+    const endRatio = ratioForSliderAlt(state.ceiling + buffer);
+    sliderSafetyBar.style.setProperty("--ceiling-ratio", String(startRatio));
+    sliderSafetyBar.style.setProperty(
+      "--buffer-ratio",
+      String(Math.max(0, endRatio - startRatio))
+    );
+  }
+}
+
 function updateUI() {
   ceilingReadout.textContent = formatMeters(state.ceiling);
   windHint.textContent = WIND_PROFILES[state.wind].hint;
+  updateSliderIndicators();
 
   const filtered = SPOTS.map(getEffectiveSpot).filter(matchesFilters);
   renderRecommendation(filtered);
@@ -841,6 +882,17 @@ recBanner.addEventListener("click", (e) => {
   syncControlsFromState();
   updateUI();
 });
+
+if (sliderLivePin) {
+  sliderLivePin.addEventListener("click", () => {
+    if (!state.liveSnapshot) return;
+    state.ceiling = state.liveSnapshot.ceiling;
+    state.wind = state.liveSnapshot.wind;
+    state.isLiveAuto = true;
+    syncControlsFromState();
+    updateUI();
+  });
+}
 
 transportButtons.forEach((btn) => {
   btn.addEventListener("click", () => {

@@ -116,14 +116,26 @@
                 <label for="fog-slider">Forecast Fog Ceiling</label>
                 <span class="ceiling-readout" id="ceiling-readout">1,100 m</span>
               </div>
-              <input
-                type="range"
-                id="fog-slider"
-                min="700"
-                max="2000"
-                step="50"
-                value="1100"
-              />
+              <div class="slider-pin-wrap">
+                <button
+                  type="button"
+                  class="slider-live-pin hidden"
+                  id="slider-live-pin"
+                  title="Snap slider back to live weather estimate"
+                >
+                  <span class="live-dot is-live" aria-hidden="true"></span>
+                  <span id="slider-live-pin-text">Live 1,300 m</span>
+                </button>
+                <input
+                  type="range"
+                  id="fog-slider"
+                  min="700"
+                  max="2000"
+                  step="50"
+                  value="1100"
+                />
+                <div class="slider-safety-bar" id="slider-safety-bar" aria-hidden="true"></div>
+              </div>
               <div class="range-ticks" aria-hidden="true">
                 <span>700 m</span>
                 <span>1,000 m</span>
