@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Instagram Story Generator · Above the Fog (abovethefog.ch)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --text: #16202a;
+      --muted: #526273;
+      --border: #dce3ec;
+      --sky-deep: #0f294a;
+      --sun: #f59e0b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 1.75rem 1rem 3rem;
+    }
+
+    .wrap {
+      width: min(960px, 94vw);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(280px, 380px) 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.35rem;
+      box-shadow: 0 8px 24px rgba(15, 41, 74, 0.06);
+    }
+
+    .eyebrow {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #1d4ed8;
+      margin: 0 0 0.4rem;
+    }
+
+    h1 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.85rem;
+      line-height: 1.15;
+      margin: 0 0 0.65rem;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0 0 1.2rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: var(--sun);
+      border-color: var(--sun);
+      color: #16202a;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .status-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .caption-box {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .caption-box h2 {
+      font-size: 0.95rem;
+      margin: 0 0 0.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem;
+      font-family: inherit;
+      font-size: 0.84rem;
+      color: var(--text);
+      background: var(--bg);
+      resize: vertical;
+    }
+
+    /* 9:16 Live Preview Frame */
+    .story-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #0f294a;
+      color: #ffffff;
+      box-shadow: 0 20px 45px rgba(15, 41, 74, 0.22);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.45rem 1.35rem;
+    }
+
+    .story-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+    }
+
+    .story-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(15, 41, 74, 0.76) 0%,
+        rgba(15, 41, 74, 0.28) 42%,
+        rgba(15, 41, 74, 0.88) 76%,
+        rgba(10, 25, 47, 0.96) 100%
+      );
+    }
+
+    .story-top,
+    .story-bottom {
+      position: relative;
+      z-index: 2;
+    }
+
+    .story-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      margin-bottom: 0.7rem;
+    }
+
+    .story-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+    }
+
+    .story-verdict {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.75rem;
+      line-height: 1.1;
+      margin: 0 0 0.35rem;
+    }
+
+    .story-date {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .story-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .story-stat {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 0.6rem 0.7rem;
+    }
+
+    .story-stat-lbl {
+      display: block;
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #fde68a;
+      font-weight: 700;
+    }
+
+    .story-stat-val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .story-stat-sub {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .story-picks {
+      background: rgba(255, 255, 255, 0.96);
+      color: #16202a;
+      border-radius: 14px;
+      padding: 0.8rem 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .story-pick-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 0.25rem 0;
+      font-size: 0.82rem;
+    }
+
+    .story-pick-row + .story-pick-row {
+      border-top: 1px solid #e2e8f0;
+      margin-top: 0.25rem;
+      padding-top: 0.45rem;
+    }
+
+    .story-pick-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #92400e;
+    }
+
+    .story-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="story-frame" id="story-frame">
+      <img src="/hero-alpstein.jpg" alt="Alpstein peaks above fog" class="story-bg" id="story-bg" />
+      <div class="story-scrim"></div>
+
+      <div class="story-top">
+        <div class="story-kicker">
+          <span class="story-dot"></span>
+          <span>St. Gallen Fog Report</span>
+        </div>
+        <h2 class="story-verdict" id="pv-verdict">Loading live weather…</h2>
+        <div class="story-date" id="pv-date">MeteoSwiss + Open-Meteo</div>
+      </div>
+
+      <div class="story-bottom">
+        <div class="story-stats">
+          <div class="story-stat">
+            <span class="story-stat-lbl">Est. Fog Ceiling</span>
+            <div class="story-stat-val" id="pv-ceiling">—</div>
+            <div class="story-stat-sub" id="pv-wind">—</div>
+          </div>
+          <div class="story-stat">
+            <span class="story-stat-lbl">Sun Today</span>
+            <div class="story-stat-val" id="pv-sun">—</div>
+            <div class="story-stat-sub" id="pv-temps">—</div>
+          </div>
+        </div>
+
+        <div class="story-picks" id="pv-picks">
+          <!-- Populated by script -->
+        </div>
+
+        <div class="story-footer">
+          <span>abovethefog.ch</span>
+          <span>@abovethefog.ch · Live Webcams</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Instagram Daily Tool</p>
+      <h1>9:16 Story Card Generator</h1>
+      <p class="sub">
+        Automatically pulls live MeteoSwiss &amp; Open-Meteo conditions for St. Gallen, picks
+        today's sunniest open peaks, and exports a crisp <strong>1080×1920 PNG</strong> ready for
+        Instagram Stories.
+      </p>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="download-btn" disabled>
+          Download 1080×1920 PNG
+        </button>
+        <button type="button" class="btn" id="refresh-btn">Refresh Live Data</button>
+        <a href="/" class="btn">← Back to Map &amp; Finder</a>
+      </div>
+
+      <p class="status-note" id="status-note">Fetching live conditions from /api/weather…</p>
+
+      <div class="caption-box">
+        <h2>Ready-to-Paste Story / Post Caption</h2>
+        <textarea id="caption-text" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SPOTS = [
+      { name: "Vögelinsegg", elevation: 1084, min: 15, open: true },
+      { name: "St. Anton", elevation: 1110, min: 25, open: true },
+      { name: "Oberer Gäbris", elevation: 1251, min: 25, open: true },
+      { name: "Hochhamm", elevation: 1275, min: 30, open: true },
+      { name: "Hundwiler Höhi", elevation: 1306, min: 30, open: true },
+      { name: "Schwägalp", elevation: 1352, min: 45, open: true },
+      { name: "Ebenalp", elevation: 1644, min: 40, reopensAfter: "2026-12-18" },
+      { name: "Kronberg", elevation: 1663, min: 35, open: true },
+      { name: "Hoher Kasten", elevation: 1794, min: 40, open: true },
+      { name: "Säntis", elevation: 2502, min: 50, reopensAfter: "2026-12-18" }
+    ];
+
+    const BUFFERS = {
+      calm: { label: "Calm High Pressure", buf: 150 },
+      "weak-bise": { label: "Weak Bise (NE)", buf: 150 },
+      "strong-bise": { label: "Strong Bise (NE)", buf: 200 },
+      "sw-foehn": { label: "SW Wind / Föhn", buf: 100 }
+    };
+
+    let latestState = null;
+
+    const pvVerdict = document.getElementById("pv-verdict");
+    const pvDate = document.getElementById("pv-date");
+    const pvCeiling = document.getElementById("pv-ceiling");
+    const pvWind = document.getElementById("pv-wind");
+    const pvSun = document.getElementById("pv-sun");
+    const pvTemps = document.getElementById("pv-temps");
+    const pvPicks = document.getElementById("pv-picks");
+    const statusNote = document.getElementById("status-note");
+    const captionText = document.getElementById("caption-text");
+    const downloadBtn = document.getElementById("download-btn");
+    const refreshBtn = document.getElementById("refresh-btn");
+
+    function isOpen(s) {
+      if (s.open) return true;
+      if (s.reopensAfter) {
+        return new Date().toISOString().slice(0, 10) > s.reopensAfter;
+      }
+      return false;
+    }
+
+    async function fetchWeather() {
+      try {
+        const r = await fetch("/api/weather");
+        if (r.ok) return await r.json();
+      } catch (_) {}
+      const om = await fetch(
+        "https://api.open-meteo.com/v1/forecast?latitude=47.4245,47.2494&longitude=9.3767,9.3433&current=temperature_2m,relative_humidity_2m,cloud_cover,cloud_cover_low,wind_speed_10m,wind_direction_10m&daily=sunshine_duration&timezone=Europe%2FZurich&forecast_days=1"
+      );
+      const raw = await om.json();
+      const [sg, sae] = Array.isArray(raw) ? raw : [raw, {}];
+      const sgC = sg.current || {};
+      const saeC = sae.current || {};
+      const sgLow = sgC.cloud_cover_low || 0;
+      let ceiling = 1150;
+      let verdict = "Classic Fog Day (Sun Above)";
+      if (sgC.relative_humidity_2m < 80 && sgLow < 40) {
+        verdict = "Valley Likely Clear";
+        ceiling = 750;
+      }
+      const toH = (s) => (s != null ? Math.round((s / 3600) * 10) / 10 : null);
+      return {
+        updatedAt: new Date().toISOString(),
+        windProfile: "weak-bise",
+        estimatedCeiling: ceiling,
+        verdict,
+        stations: {
+          STG: { temp: sgC.temperature_2m, rh: sgC.relative_humidity_2m },
+          SAE: { temp: saeC.temperature_2m, rh: saeC.relative_humidity_2m }
+        },
+        forecast: {
+          today: {
+            stGallenSunHours: toH(sg.daily && sg.daily.sunshine_duration && sg.daily.sunshine_duration[0]),
+            saentisSunHours: toH(sae.daily && sae.daily.sunshine_duration && sae.daily.sunshine_duration[0])
+          }
+        }
+      };
+    }
+
+    async function load() {
+      downloadBtn.disabled = true;
+      refreshBtn.disabled = true;
+      statusNote.textContent = "Refreshing live MeteoSwiss & Open-Meteo data…";
+
+      try {
+        const data = await fetchWeather();
+        const wind = BUFFERS[data.windProfile] || BUFFERS["weak-bise"];
+        const ceiling = data.estimatedCeiling || 1200;
+        const target = ceiling + wind.buf;
+
+        const clear = SPOTS.filter((s) => isOpen(s) && s.elevation >= target);
+        const quickest = clear.length
+          ? [...clear].sort((a, b) => a.min - b.min)[0]
+          : { name: "Hoher Kasten", elevation: 1794, min: 40 };
+        const surest = clear.length
+          ? [...clear].sort((a, b) => b.elevation - a.elevation)[0]
+          : { name: "Hoher Kasten", elevation: 1794, min: 40 };
+
+        const stg = (data.stations && data.stations.STG) || {};
+        const sae = (data.stations && data.stations.SAE) || {};
+        const today = (data.forecast && data.forecast.today) || {};
+
+        const dateStr = new Date().toLocaleDateString("en-CH", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          timeZone: "Europe/Zurich"
+        });
+
+        pvVerdict.textContent = data.verdict;
+        pvDate.textContent = `${dateStr} · MeteoSwiss Live`;
+        pvCeiling.textContent = `~${ceiling.toLocaleString("en-US")} m`;
+        pvWind.textContent = `${wind.label} (+${wind.buf} m)`;
+        pvSun.textContent = `${today.saentisSunHours ?? "—"} h vs ${today.stGallenSunHours ?? "—"} h`;
+        pvTemps.textContent = `Säntis ${sae.temp ?? "—"}°C · SG ${stg.temp ?? "—"}°C`;
+
+        pvPicks.innerHTML = `
+          <div class="story-pick-row">
+            <span class="story-pick-tag">Quickest Sun</span>
+            <strong>${quickest.name} (${quickest.elevation.toLocaleString("en-US")} m)</strong>
+          </div>
+          <div class="story-pick-row">
+            <span class="story-pick-tag">Surest Margin</span>
+            <strong>${surest.name} (${surest.elevation.toLocaleString("en-US")} m)</strong>
+          </div>
+        `;
+
+        captionText.value =
+          `Grey in St. Gallen, blue sky up top ☀️\n` +
+          `Today's estimate (${dateStr}): ${data.verdict} (~${ceiling.toLocaleString("en-US")} m ceiling, ${wind.label}).\n` +
+          `Säntis sun: ${today.saentisSunHours ?? "—"} h vs. St. Gallen: ${today.stGallenSunHours ?? "—"} h.\n` +
+          `Top picks today: ${quickest.name} (${quickest.elevation.toLocaleString("en-US")} m) & ${surest.name} (${surest.elevation.toLocaleString("en-US")} m).\n\n` +
+          `Live webcams + satellite map 👉 abovethefog.ch\n\n` +
+          `#abovethefog #stgallen #appenzellerland #hochnebel #überdemnebel #ostschweiz #alpstein`;
+
+        latestState = { data, wind, ceiling, target, quickest, surest, stg, sae, today, dateStr };
+        statusNote.textContent = "Ready! Click Download to save a 1080×1920 PNG for Instagram Stories.";
+        downloadBtn.disabled = false;
+      } catch (err) {
+        statusNote.textContent = "Could not load weather right now—try refreshing.";
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function drawAndDownload() {
+      if (!latestState) return;
+      const W = 1080;
+      const H = 1920;
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext("2d");
+
+      const img = document.getElementById("story-bg");
+      if (img && img.complete && img.naturalWidth) {
+        const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+        const dw = img.naturalWidth * scale;
+        const dh = img.naturalHeight * scale;
+        ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      } else {
+        ctx.fillStyle = "#0f294a";
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, "rgba(15, 41, 74, 0.78)");
+      grad.addColorStop(0.42, "rgba(15, 41, 74, 0.28)");
+      grad.addColorStop(0.75, "rgba(15, 41, 74, 0.88)");
+      grad.addColorStop(1, "rgba(10, 25, 47, 0.96)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      const { data, wind, ceiling, quickest, surest, stg, sae, today, dateStr } = latestState;
+
+      // Top pill
+      ctx.fillStyle = "rgba(255,255,255,0.16)";
+      roundRect(ctx, 72, 110, 420, 56, 28);
+      ctx.fill();
+      ctx.fillStyle = "#34d399";
+      ctx.beginPath();
+      ctx.arc(108, 138, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "700 24px Inter, sans-serif";
+      ctx.fillText("ST. GALLEN FOG REPORT", 134, 147);
+
+      // Verdict title
+      ctx.font = "600 84px Newsreader, Georgia, serif";
+      ctx.fillStyle = "#ffffff";
+      const words = data.verdict.split(" ");
+      let line1 = "";
+      let line2 = "";
+      for (const w of words) {
+        if ((line1 + " " + w).trim().length <= 20) line1 = (line1 + " " + w).trim();
+        else line2 = (line2 + " " + w).trim();
+      }
+      ctx.fillText(line1, 72, 265);
+      if (line2) ctx.fillText(line2, 72, 358);
+
+      ctx.font = "500 32px Inter, sans-serif";
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.fillText(`${dateStr} · MeteoSwiss Live`, 72, line2 ? 420 : 330);
+
+      // Two stat cards
+      const cardY = 1230;
+      const cardW = 452;
+      const cardH = 210;
+      [
+        {
+          x: 72,
+          lbl: "EST. FOG CEILING",
+          val: `~${ceiling.toLocaleString("en-US")} m`,
+          sub: `${wind.label} (+${wind.buf} m)`
+        },
+        {
+          x: 556,
+          lbl: "SUN TODAY (SÄNTIS VS SG)",
+          val: `${today.saentisSunHours ?? "—"} h vs ${today.stGallenSunHours ?? "—"} h`,
+          sub: `Säntis ${sae.temp ?? "—"}°C · SG ${stg.temp ?? "—"}°C`
+        }
+      ].forEach((c) => {
+        ctx.fillStyle = "rgba(255,255,255,0.14)";
+        roundRect(ctx, c.x, cardY, cardW, cardH, 26);
+        ctx.fill();
+        ctx.fillStyle = "#fde68a";
+        ctx.font = "700 22px Inter, sans-serif";
+        ctx.fillText(c.lbl, c.x + 28, cardY + 52);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "700 44px Inter, sans-serif";
+        ctx.fillText(c.val, c.x + 28, cardY + 118);
+        ctx.fillStyle = "rgba(255,255,255,0.84)";
+        ctx.font = "500 24px Inter, sans-serif";
+        ctx.fillText(c.sub, c.x + 28, cardY + 170);
+      });
+
+      // White recommendation card
+      ctx.fillStyle = "rgba(255,255,255,0.97)";
+      roundRect(ctx, 72, 1475, 936, 235, 30);
+      ctx.fill();
+
+      ctx.fillStyle = "#92400e";
+      ctx.font = "700 24px Inter, sans-serif";
+      ctx.fillText("QUICKEST SUN", 110, 1545);
+      ctx.fillStyle = "#16202a";
+      ctx.font = "700 38px Inter, sans-serif";
+      ctx.fillText(`${quickest.name} (${quickest.elevation.toLocaleString("en-US")} m)`, 410, 1547);
+
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(110, 1592);
+      ctx.lineTo(970, 1592);
+      ctx.stroke();
+
+      ctx.fillStyle = "#92400e";
+      ctx.font = "700 24px Inter, sans-serif";
+      ctx.fillText("SUREST MARGIN", 110, 1658);
+      ctx.fillStyle = "#16202a";
+      ctx.font = "700 38px Inter, sans-serif";
+      ctx.fillText(`${surest.name} (${surest.elevation.toLocaleString("en-US")} m)`, 410, 1660);
+
+      // Footer
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "700 32px Inter, sans-serif";
+      ctx.fillText("abovethefog.ch", 72, 1795);
+      ctx.font = "500 28px Inter, sans-serif";
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.fillText("@abovethefog.ch · Live Webcams & Satellite Map", 360, 1795);
+
+      const link = document.createElement("a");
+      const iso = new Date().toISOString().slice(0, 10);
+      link.download = `abovethefog-story-${iso}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    refreshBtn.addEventListener("click", load);
+    downloadBtn.addEventListener("click", drawAndDownload);
+    load();
+  </script>
+</body>
+</html>
