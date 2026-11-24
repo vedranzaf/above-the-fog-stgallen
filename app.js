@@ -239,7 +239,9 @@ const state = {
   ceiling: 1100,
   wind: "weak-bise",
   transport: "all",
-  hideClosed: true
+  hideClosed: true,
+  isLiveAuto: false,
+  liveSnapshot: null
 };
 
 const MAX_CHART_ALT = 2600;
@@ -299,9 +301,48 @@ function matchesFilters(spot) {
   return true;
 }
 
+function buildRecHeaderHtml() {
+  if (state.isLiveAuto && state.liveSnapshot) {
+    const timePart = state.liveSnapshot.timeLabel
+      ? `Updated ${state.liveSnapshot.timeLabel} CET`
+      : "Live weather active";
+    return `
+      <div class="rec-header">
+        <span class="rec-mode-pill">
+          <span class="live-dot is-live" aria-hidden="true"></span>
+          Live Suggestion · Auto-recommended from current weather
+        </span>
+        <span class="rec-meta-note">${timePart}</span>
+      </div>
+    `;
+  }
+
+  if (state.liveSnapshot) {
+    return `
+      <div class="rec-header">
+        <span class="rec-mode-pill">
+          <span class="live-dot is-manual" aria-hidden="true"></span>
+          Manual Override · Adjusted from live weather
+        </span>
+        <button type="button" class="reset-live-btn" id="reset-live-btn">Reset to Live</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="rec-header">
+      <span class="rec-mode-pill">
+        <span class="live-dot is-manual" aria-hidden="true"></span>
+        Checking live weather…
+      </span>
+    </div>
+  `;
+}
+
 function renderRecommendation(filteredSpots) {
   const buffer = WIND_PROFILES[state.wind].buffer;
   const targetElev = state.ceiling + buffer;
+  const headerHtml = buildRecHeaderHtml();
 
   const clearSpots = filteredSpots.filter(
     (s) => s.status === "open" && s.elevation >= targetElev
@@ -315,20 +356,23 @@ function renderRecommendation(filteredSpots) {
     const surest = [...clearSpots].sort((a, b) => b.elevation - a.elevation)[0];
 
     recBanner.innerHTML = `
-      <div>
-        <span class="rec-item-label">Target Elevation (Ceiling + ${buffer} m buffer)</span>
-        <div class="rec-item-title">${formatMeters(targetElev)}+</div>
-        <div class="rec-item-meta">${clearSpots.length} open spot${clearSpots.length > 1 ? "s" : ""} safely above fog</div>
-      </div>
-      <div>
-        <span class="rec-item-label">Quickest Sunny Escape</span>
-        <div class="rec-item-title">${quickest.name} (${formatMeters(quickest.elevation)})</div>
-        <div class="rec-item-meta">${quickest.travelText}</div>
-      </div>
-      <div>
-        <span class="rec-item-label">Surest High-Margin Pick</span>
-        <div class="rec-item-title">${surest.name} (${formatMeters(surest.elevation)})</div>
-        <div class="rec-item-meta">+${surest.elevation - state.ceiling} m above forecast fog ceiling</div>
+      ${headerHtml}
+      <div class="rec-grid">
+        <div>
+          <span class="rec-item-label">Target Elevation (Ceiling + ${buffer} m buffer)</span>
+          <div class="rec-item-title">${formatMeters(targetElev)}+</div>
+          <div class="rec-item-meta">${clearSpots.length} open spot${clearSpots.length > 1 ? "s" : ""} safely above fog</div>
+        </div>
+        <div>
+          <span class="rec-item-label">Quickest Sunny Escape</span>
+          <div class="rec-item-title">${quickest.name} (${formatMeters(quickest.elevation)})</div>
+          <div class="rec-item-meta">${quickest.travelText}</div>
+        </div>
+        <div>
+          <span class="rec-item-label">Surest High-Margin Pick</span>
+          <div class="rec-item-title">${surest.name} (${formatMeters(surest.elevation)})</div>
+          <div class="rec-item-meta">+${surest.elevation - state.ceiling} m above forecast fog ceiling</div>
+        </div>
       </div>
     `;
     return;
@@ -337,26 +381,32 @@ function renderRecommendation(filteredSpots) {
   if (borderlineSpots.length > 0) {
     const highest = [...borderlineSpots].sort((a, b) => b.elevation - a.elevation)[0];
     recBanner.innerHTML = `
-      <div>
-        <span class="rec-item-label">Target Elevation</span>
-        <div class="rec-item-title">${formatMeters(targetElev)}+</div>
-        <div class="rec-item-meta">No open spots with full buffer</div>
-      </div>
-      <div>
-        <span class="rec-item-label">Best Borderline Option</span>
-        <div class="rec-item-title">${highest.name} (${formatMeters(highest.elevation)})</div>
-        <div class="rec-item-meta">Check its webcam first—only +${highest.elevation - state.ceiling} m above ceiling</div>
+      ${headerHtml}
+      <div class="rec-grid">
+        <div>
+          <span class="rec-item-label">Target Elevation</span>
+          <div class="rec-item-title">${formatMeters(targetElev)}+</div>
+          <div class="rec-item-meta">No open spots with full buffer</div>
+        </div>
+        <div>
+          <span class="rec-item-label">Best Borderline Option</span>
+          <div class="rec-item-title">${highest.name} (${formatMeters(highest.elevation)})</div>
+          <div class="rec-item-meta">Check its webcam first—only +${highest.elevation - state.ceiling} m above ceiling</div>
+        </div>
       </div>
     `;
     return;
   }
 
   recBanner.innerHTML = `
-    <div>
-      <span class="rec-item-label">High Fog Warning</span>
-      <div class="rec-item-title">All matching open spots are inside the fog</div>
-      <div class="rec-item-meta">
-        At ${formatMeters(state.ceiling)}, wait for a clearer day, broaden transport filters, or check Hoher Kasten (1,794 m) / Säntis after Dec 18.
+    ${headerHtml}
+    <div class="rec-grid">
+      <div>
+        <span class="rec-item-label">High Fog Warning</span>
+        <div class="rec-item-title">All matching open spots are inside the fog</div>
+        <div class="rec-item-meta">
+          At ${formatMeters(state.ceiling)}, wait for a clearer day, broaden transport filters, or check Hoher Kasten (1,794 m) / Säntis after Dec 18.
+        </div>
       </div>
     </div>
   `;
@@ -638,6 +688,14 @@ async function loadLiveWeather() {
       state.wind = data.windProfile;
     }
 
+    const stgTime = data.stations && data.stations.STG && data.stations.STG.observedAt;
+    state.liveSnapshot = {
+      ceiling: state.ceiling,
+      wind: state.wind,
+      timeLabel: formatLocalTime(stgTime || data.updatedAt)
+    };
+    state.isLiveAuto = true;
+
     syncControlsFromState();
     renderLiveWeather(data);
     updateUI();
@@ -646,6 +704,7 @@ async function loadLiveWeather() {
       liveVerdict.textContent = "Live weather unavailable—adjust sliders manually below.";
     }
     if (liveUpdated) liveUpdated.textContent = "";
+    updateUI();
   } finally {
     if (refreshWeatherBtn) refreshWeatherBtn.disabled = false;
   }
@@ -653,6 +712,7 @@ async function loadLiveWeather() {
 
 fogSlider.addEventListener("input", (e) => {
   state.ceiling = Number(e.target.value);
+  state.isLiveAuto = false;
   updateUI();
 });
 
@@ -661,8 +721,19 @@ windButtons.forEach((btn) => {
     windButtons.forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     state.wind = btn.dataset.wind;
+    state.isLiveAuto = false;
     updateUI();
   });
+});
+
+recBanner.addEventListener("click", (e) => {
+  const resetBtn = e.target.closest("#reset-live-btn");
+  if (!resetBtn || !state.liveSnapshot) return;
+  state.ceiling = state.liveSnapshot.ceiling;
+  state.wind = state.liveSnapshot.wind;
+  state.isLiveAuto = true;
+  syncControlsFromState();
+  updateUI();
 });
 
 transportButtons.forEach((btn) => {
