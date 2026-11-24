@@ -1,0 +1,32 @@
+# Above the Fog · St. Gallen (Über dem Nebel)
+
+> Live Swiss fog-escape guide for St. Gallen (~675 m) and Eastern Switzerland (Appenzell & Alpstein). Combines live MeteoSwiss 10-minute station telemetry and Open-Meteo cloud/sunshine forecasts to recommend sunny viewpoints above valley fog (Hochnebel).
+
+- Canonical URL: https://www.abovethefog.ch/
+- Live Weather JSON API: https://www.abovethefog.ch/api/weather
+
+## Live Weather & Fog Detection API (`/api/weather`)
+Returns JSON (10-minute cache) with:
+- MeteoSwiss VQHA80 station observations for `ALT` (Altenrhein 398 m), `STG` (St. Gallen 776 m), `HOE` (Hörnli 1,133 m), and `SAE` (Säntis 2,502 m).
+- Open-Meteo current cloud layers & daily sunshine duration forecast (St. Gallen vs. Säntis).
+- Derived `windProfile` (`calm`, `weak-bise`, `strong-bise`, `sw-foehn`), `estimatedCeiling` (meters), and `verdict` (`Classic Fog Day (Sun Above)`, `Valley Likely Clear`, or `Overcast / High Cloud Likely`).
+
+## Curated Sun-Escape Spots Around St. Gallen (Lowest to Highest)
+1. **Pfänder** (1,064 m, Bregenz, AT — 47.5076, 9.7797): ~35 min drive + 6-min cable car. Lake Constance fog sea view. Webcam: https://pfaender.panomax.com/
+2. **Vögelinsegg** (1,084 m, above Speicher, AR — 47.4050, 9.4239): ~15 min via Appenzeller Bahnen S21/S22 (GA covered) or car. Closest quick sun terrace.
+3. **St. Anton** (1,110 m, Oberegg, AI — 47.4126, 9.5469): ~25 min car or PostAuto (GA). Rhine Valley & Lake Constance views. Webcam: https://www.st-antonoberegg.ch/webcam.html
+4. **Oberer Gäbris** (1,251 m, Gais, AR — 47.3812, 9.4682): ~25 min car or GA train to Gais + walk. 360° Alpstein view & sun terrace. Inn: https://oberergaebris.ch/
+5. **Hochhamm** (1,275 m, Schönengrund/Urnäsch, AR — 47.3095, 9.2571): ~30 min drive + short walk. Summit restaurant.
+6. **Hundwiler Höhi** (1,306 m, Hundwil, AR — 47.3413, 9.3358): ~25–30 min drive + short hike. Ridge above Mittelland stratus.
+7. **Schwägalp** (1,352 m, AR/SG — 47.2557, 9.3177): ~45 min car or PostAuto (GA). Driveable pass under Säntis. Webcams: https://saentisbahn.ch/webcam-wetter/
+8. **Ebenalp** (1,644 m, Wasserauen, AI — 47.2836, 9.4109): ~40 min GA train + cable car. *Maintenance closure: Nov 2 – ~Dec 18, 2026.* Webcam: https://ebenalp.roundshot.com/
+9. **Kronberg** (1,663 m, Jakobsbad, AI — 47.2914, 9.3292): ~35 min GA train/car + cable car. Dual summit (1,663 m) + valley (884 m) webcams: https://en.kronberg.ch/webcam.html | 360°: https://kronberg.roundshot.com/gipfel/
+10. **Hoher Kasten** (1,794 m, Brülisau, AI — 47.2836, 9.4852): ~40 min car/PostAuto + 8-min cable car. Revolving restaurant & cleared Europa-Rundweg. Winter timetable Oct 19, 2026 – Feb 28, 2027 (from 08:40). Webcam: https://www.hoherkasten.ch/informieren/webcam-wetter/
+11. **Säntis Summit** (2,502 m, Schwägalp — 47.2494, 9.3433): *Cable car rebuild ("Säntis 2026"): first public guest rides planned Dec 18, 2026.* Webcam: https://saentis.roundshot.com/
+
+## Eastern Switzerland Fog Rules (Hochnebelobergrenze)
+- **Calm high pressure:** Fog top typically 800–1,000 m.
+- **Weak Bise (NE wind):** Fog lifts to 900–1,200 m against pre-Alps.
+- **Moderate/Strong Bise:** Strong damming (Stau) against Alpstein pushes fog to 1,400–1,700+ m; choose Kronberg or Hoher Kasten.
+- **SW wind / Föhn:** Erodes and lowers fog below 800 m.
+- **Safety buffer:** Always target 150–200 m above the forecast fog ceiling before late morning.
