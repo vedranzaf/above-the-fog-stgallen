@@ -1278,6 +1278,68 @@ input[type="range"].is-live-match {
   margin: 0;
 }
 
+.wind-card p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Overcast Plan B */
+.plan-b-group-title {
+  font-size: 1.15rem;
+  margin: 1.5rem 0 0.9rem;
+  color: var(--text);
+}
+
+.plan-b-group-title:first-of-type {
+  margin-top: 0;
+}
+
+.plan-b-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.plan-b-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  box-shadow: 0 4px 12px rgba(15, 41, 74, 0.04);
+}
+
+.plan-b-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sky);
+}
+
+.plan-b-card h4 {
+  font-size: 1.04rem;
+  margin: 0;
+}
+
+.plan-b-card p {
+  font-size: 0.87rem;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+.plan-b-jump {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--sky);
+}
+
 /* FAQ */
 .faq-list {
   display: grid;

@@ -265,7 +265,8 @@ const state = {
   transport: "all",
   hideClosed: true,
   isLiveAuto: false,
-  liveSnapshot: null
+  liveSnapshot: null,
+  liveVerdict: ""
 };
 
 const MAX_CHART_ALT = 2600;
@@ -486,6 +487,11 @@ function renderRecommendation(filteredSpots) {
     (s) => s.status === "open" && s.elevation >= state.ceiling && s.elevation < targetElev
   );
 
+  const isOvercast = state.liveVerdict.includes("Overcast");
+  const planBHtml = isOvercast
+    ? `<a href="#plan-b" class="plan-b-jump">Grey up top too? Try Overcast Plan B (Sauna &amp; Art) ↓</a>`
+    : "";
+
   if (clearSpots.length > 0) {
     const quickest = [...clearSpots].sort((a, b) => a.travelMinutes - b.travelMinutes)[0];
     const surest = [...clearSpots].sort((a, b) => b.elevation - a.elevation)[0];
@@ -497,6 +503,7 @@ function renderRecommendation(filteredSpots) {
           <span class="rec-item-label">Target Elevation (Ceiling + ${buffer} m buffer)</span>
           <div class="rec-item-title">${formatMeters(targetElev)}+</div>
           <div class="rec-item-meta">${clearSpots.length} open spot${clearSpots.length > 1 ? "s" : ""} safely above fog</div>
+          ${planBHtml}
         </div>
         <div>
           <span class="rec-item-label">Quickest Sunny Escape</span>
@@ -522,6 +529,7 @@ function renderRecommendation(filteredSpots) {
           <span class="rec-item-label">Target Elevation</span>
           <div class="rec-item-title">${formatMeters(targetElev)}+</div>
           <div class="rec-item-meta">No open spots with full buffer</div>
+          ${planBHtml}
         </div>
         <div>
           <span class="rec-item-label">Best Borderline Option</span>
@@ -537,11 +545,12 @@ function renderRecommendation(filteredSpots) {
     ${headerHtml}
     <div class="rec-grid">
       <div>
-        <span class="rec-item-label">High Fog Warning</span>
-        <div class="rec-item-title">All matching open spots are inside the fog</div>
+        <span class="rec-item-label">High Fog / Overcast Plan B</span>
+        <div class="rec-item-title">All matching open spots are inside cloud</div>
         <div class="rec-item-meta">
-          At ${formatMeters(state.ceiling)}, wait for a clearer day, broaden transport filters, or check Hoher Kasten (1,794 m) / Säntis after Dec 18.
+          At ${formatMeters(state.ceiling)}, broaden transport filters, check Hoher Kasten (1,794 m), or warm up with a local sauna or exhibition.
         </div>
+        <a href="#plan-b" class="plan-b-jump">Grey up top too? Try Overcast Plan B (Sauna &amp; Art) ↓</a>
       </div>
     </div>
   `;
@@ -868,6 +877,7 @@ async function loadLiveWeather() {
       wind: state.wind,
       timeLabel: formatLocalTime(stgTime || data.updatedAt)
     };
+    state.liveVerdict = data.verdict || "";
     state.isLiveAuto = true;
 
     syncControlsFromState();
